@@ -26,6 +26,29 @@ const MessageSchema = new mongoose.Schema({
 });
 const Message = mongoose.model("Message", MessageSchema);
 
+// Fetch all messages
+app.get("/messages", async (req, res) => {
+  try {
+    const messages = await Message.find();
+    res.json(messages);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching messages" });
+  }
+});
+
+// Store a new message
+app.post("/messages", async (req, res) => {
+  try {
+    const { text, sender } = req.body;
+    const newMessage = new Message({ text, sender });
+    await newMessage.save();
+    io.emit("receive-message", newMessage); // Broadcast message
+    res.status(201).json(newMessage);
+  } catch (error) {
+    res.status(500).json({ error: "Error sending message" });
+  }
+});
+
 // WebSocket Connection
 io.on("connection", (socket) => {
   console.log("User connected");
