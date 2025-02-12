@@ -1,24 +1,16 @@
-import { useState } from 'react'
-import Sidebar from "./Components/Sidebar";
-import Navbar from "./Components/Navbar";
-import ChatWindow from "./Components/ChatWindow";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LoginPage from "./components/LoginPage";
+import RegisterPage from "./components/RegisterPage";
+import Home from "./components/Home"; // Wrap Sidebar + ChatWindow
 
-import './App.css'
-import RegisterPage from './RegisterPage'
-import LoginPage from './LoginPage'
-
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
   return (
-    <div className="flex h-screen">
-      <Sidebar/>
-      <div className="flex flex-col flex-1">
-        <Navbar />
-        <ChatWindow />
-      </div>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/home" element={<Home />} />
+      </Routes>
+    </Router>
   );
 }
-
-export default App

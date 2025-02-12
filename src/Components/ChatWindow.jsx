@@ -1,13 +1,28 @@
-import Messages from "./Messages";
-import MessageInput from "./MessageInput";
+import { useEffect, useState } from "react";
+import io from "socket.io-client";
+
+const socket = io("http://localhost:5000"); // Backend Server
 
 export default function ChatWindow() {
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    socket.on("receive-message", (message) => {
+      setMessages((prev) => [...prev, message]);
+    });
+  }, []);
+
+  const sendMessage = (text) => {
+    socket.emit("send-message", text);
+    setMessages((prev) => [...prev, { text, sender: "You" }]);
+  };
+
   return (
-    <div className="flex-1 flex flex-col bg-gray-900">
-      <div className="flex-1 overflow-y-auto p-4">
-        <Messages />
-      </div>
-      <MessageInput />
+    <div>
+      {messages.map((msg, index) => (
+        <p key={index}>{msg.sender}: {msg.text}</p>
+      ))}
+      <button onClick={() => sendMessage("Hello!")}>Send</button>
     </div>
   );
 }
